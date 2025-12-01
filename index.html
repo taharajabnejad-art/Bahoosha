@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>AI Chat</title>
+<link rel="stylesheet" href="CSS/app.css">
+<style>
+  body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+  #chat { max-width: 600px; margin: 0 auto; }
+  .message { margin: 10px 0; padding: 10px; border-radius: 8px; }
+  .user { background: #d1e7ff; text-align: right; }
+  .ai { background: #e2ffe2; text-align: left; }
+  img { max-width: 100%; margin-top: 5px; border-radius: 5px; }
+</style>
+</head>
+<body>
+
+<div id="chat"></div>
+
+<form id="chatForm">
+  <input id="message" type="text" placeholder="پیام خود را بنویسید" required>
+  <input id="image" type="file" accept="image/*">
+  <button type="submit">ارسال</button>
+</form>
+
+<script>
+const chatDiv = document.getElementById("chat");
+const form = document.getElementById("chatForm");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const message = document.getElementById("message").value;
+  const imageFile = document.getElementById("image").files[0];
+
+  // نمایش پیام کاربر
+  const userMsg = document.createElement("div");
+  userMsg.className = "message user";
+  userMsg.innerHTML = message;
+  if(imageFile){
+    const imgTag = document.createElement("img");
+    imgTag.src = URL.createObjectURL(imageFile);
+    userMsg.appendChild(imgTag);
+  }
+  chatDiv.appendChild(userMsg);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+
+  // ارسال به backend
+  const formData = new FormData();
+  formData.append("message", message);
+  if(imageFile) formData.append("image", imageFile);
+
+  const res = await fetch("https://YOUR_BACKEND_URL/chat", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  // نمایش پاسخ AI
+  const aiMsg = document.createElement("div");
+  aiMsg.className = "message ai";
+  aiMsg.textContent = data.reply;
+  chatDiv.appendChild(aiMsg);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+
+  form.reset();
+});
+</script>
+
+</body>
+</html>
