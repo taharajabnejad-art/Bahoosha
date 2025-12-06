@@ -1,71 +1,59 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-<meta charset="UTF-8">
-<title>AI Chat</title>
-<link rel="stylesheet" href="CSS/app.css">
-<style>
-  body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
-  #chat { max-width: 600px; margin: 0 auto; }
-  .message { margin: 10px 0; padding: 10px; border-radius: 8px; }
-  .user { background: #d1e7ff; text-align: right; }
-  .ai { background: #e2ffe2; text-align: left; }
-  img { max-width: 100%; margin-top: 5px; border-radius: 5px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ربات باهوش</title>
+  <link rel="stylesheet" href="CSS/app.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Tahoma, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #chat-container {
+      width: 100%;
+      max-width: 800px;
+      height: 90vh;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      overflow: hidden;
+      background-color: #fff;
+    }
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #4f46e5;
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-<div id="chat"></div>
+  <div id="chat-container">
+    <header>ربات باهوش</header>
+    <!-- Coze Chat Embed -->
+    <div id="coze-chat"></div>
+  </div>
 
-<form id="chatForm">
-  <input id="message" type="text" placeholder="پیام خود را بنویسید" required>
-  <input id="image" type="file" accept="image/*">
-  <button type="submit">ارسال</button>
-</form>
-
-<script>
-const chatDiv = document.getElementById("chat");
-const form = document.getElementById("chatForm");
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const message = document.getElementById("message").value;
-  const imageFile = document.getElementById("image").files[0];
-
-  // نمایش پیام کاربر
-  const userMsg = document.createElement("div");
-  userMsg.className = "message user";
-  userMsg.innerHTML = message;
-  if(imageFile){
-    const imgTag = document.createElement("img");
-    imgTag.src = URL.createObjectURL(imageFile);
-    userMsg.appendChild(imgTag);
-  }
-  chatDiv.appendChild(userMsg);
-  chatDiv.scrollTop = chatDiv.scrollHeight;
-
-  // ارسال به backend
-  const formData = new FormData();
-  formData.append("message", message);
-  if(imageFile) formData.append("image", imageFile);
-
-  const res = await fetch("https://YOUR_BACKEND_URL/chat", {
-    method: "POST",
-    body: formData
-  });
-
-  const data = await res.json();
-
-  // نمایش پاسخ AI
-  const aiMsg = document.createElement("div");
-  aiMsg.className = "message ai";
-  aiMsg.textContent = data.reply;
-  chatDiv.appendChild(aiMsg);
-  chatDiv.scrollTop = chatDiv.scrollHeight;
-
-  form.reset();
-});
-</script>
+  <script src="https://static.coze.com/sdk/script.js"></script>
+  <script>
+    createCozeChatWidget({
+      bot_id: "7580676506981122101",
+      element: document.getElementById("coze-chat"),
+      mode: "embed",
+      title: "ربات باهوش",
+      welcome_message: "سلام! من اینجام تا کمکت کنم 😊",
+      parameters: { user_name: "توحا" }
+    });
+  </script>
 
 </body>
 </html>
